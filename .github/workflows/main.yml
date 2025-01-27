@@ -1,1 +1,23 @@
+name: Restrict Branch Access
 
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  restrict-access:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Get the Commit Author
+        id: get-author
+        run: echo "AUTHOR=$(git log -1 --pretty=format:'%ae')" >> $GITHUB_ENV
+
+      - name: Restrict Access to Main Branch
+        if: env.AUTHOR != 'admin@example.com'  # Replace with the owner's email
+        run: |
+          echo "Unauthorized access attempt by ${{ env.AUTHOR }}"
+          exit 1
