@@ -19,7 +19,7 @@ jobs:
         run: |
           git config --global user.name "Veena2002"
           git config --global user.email "nagaveenab@datatemplate.com"
-
+      
       # Get the last version tag
       - name: Get last version tag
         id: last_version
@@ -32,10 +32,10 @@ jobs:
       - name: Compute new version
         id: version
         run: |
-          if [ -z "${{ env.LAST_TAG }}" ]; then
+          if [ -z "${LAST_TAG}" ]; then
             VERSION="v1.0.0"  # Default version if no tags exist
           else
-            BASE_VERSION="${{ env.LAST_TAG#v }}"  # Remove the 'v' prefix
+            BASE_VERSION="${LAST_TAG#v}"  # Remove the 'v' prefix using shell string manipulation
             VERSION=$(echo $BASE_VERSION | awk -F. -v OFS=. '{$NF++;print}')  # Increment patch version
           fi
           echo "New Version: $VERSION"
