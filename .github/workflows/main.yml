@@ -27,4 +27,4 @@ jobs:
           # Push the tag to GitHub
           git push origin $TAG_NAME
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.TOKEN }}
