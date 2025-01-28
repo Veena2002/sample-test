@@ -2,7 +2,8 @@ name: Build and Deploy - #${{ github.run_number }} | Commit: ${{ github.sha }}
 
 on:
   push:
-    branches: [ main ]
+    branches:
+      - main
 
 jobs:
   get-build-number:
@@ -16,4 +17,5 @@ jobs:
 
     - name: Output Run Attempt
       run: echo "Run Attempt: ${{ github.run_attempt }}"
+
 
