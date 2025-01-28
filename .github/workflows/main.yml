@@ -1,4 +1,4 @@
-name: Build and Deploy - #${{ github.run_number }} | Commit: ${{ github.sha }}
+name: Build and Deploy - #${{ github.run_number }}
 
 on:
   push:
@@ -6,17 +6,19 @@ on:
       - main
 
 jobs:
-  get-build-number:
+  build:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Output Run ID
-        run: echo "Run ID: ${{ github.run_id }}"
+    - name: Checkout code
+      uses: actions/checkout@v2
 
-      - name: Output Run Number
-        run: echo "Run Number: ${{ github.run_number }}"
+    - name: Build Application
+      run: |
+        echo "Building application..."
+        # Your build commands go here
 
-      - name: Output Run Attempt
-        run: echo "Run Attempt: ${{ github.run_attempt }}"
-
-
-
+    - name: Deploy
+      run: |
+        echo "Deploying application..."
+        # Your deploy commands go here
