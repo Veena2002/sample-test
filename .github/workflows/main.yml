@@ -19,6 +19,11 @@ jobs:
           echo "BUILD_NAME=$BUILD_NAME" >> $GITHUB_ENV
           echo "BUILD_NUMBER=$BUILD_NUMBER" >> $GITHUB_ENV
 
+      - name: Configure Git user
+        run: |
+          git config --global user.name "Veena2002"
+          git config --global user.email "nagaveenav@datatemplate.com"
+
       - name: Tag build
         run: |
           git tag -a "${{ env.BUILD_NAME }}-${{ env.BUILD_NUMBER }}" -m "Build ${{ env.BUILD_NAME }}-${{ env.BUILD_NUMBER }}"
