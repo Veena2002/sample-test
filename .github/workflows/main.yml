@@ -1,6 +1,7 @@
 name: Build with Tag
 
-on: push
+on:
+  push:
 
 jobs:
   build:
@@ -8,7 +9,7 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v2
 
       - name: Set up build name and number
         run: |
@@ -19,15 +20,15 @@ jobs:
           echo "BUILD_NAME=$BUILD_NAME" >> $GITHUB_ENV
           echo "BUILD_NUMBER=$BUILD_NUMBER" >> $GITHUB_ENV
 
-      - name: Configure Git user
+      - name: Set up Git identity
         run: |
           git config --global user.name "Veena2002"
-          git config --global user.email "nagaveenav@datatemplate.com"
+          git config --global user.email "nagaveenab@datatemplate.com"
 
       - name: Tag build
         run: |
           git tag -a "${{ env.BUILD_NAME }}-${{ env.BUILD_NUMBER }}" -m "Build ${{ env.BUILD_NAME }}-${{ env.BUILD_NUMBER }}"
-          git push origin "${{ env.BUILD_NAME }}-${{ env.BUILD_NUMBER }}"
+          git push https://x-access-token:${{ secrets.TOKEN }}@github.com/${{ github.repository }} "${{ env.BUILD_NAME }}-${{ env.BUILD_NUMBER }}"
 
       - name: Upload build details
         uses: actions/upload-artifact@v3
