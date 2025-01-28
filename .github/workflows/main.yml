@@ -8,7 +8,7 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Set up build name and number
         run: |
@@ -25,7 +25,7 @@ jobs:
           git push origin "${{ env.BUILD_NAME }}-${{ env.BUILD_NUMBER }}"
 
       - name: Upload build details
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: build-details
           path: ${{ env.BUILD_NAME }}-${{ env.BUILD_NUMBER }}
