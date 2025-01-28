@@ -1,38 +1,54 @@
-name: Build with Tag
+name: Dynamic Version Incrementing
 
 on:
   push:
+    branches:
+      - main  # Trigger on push to the main branch
 
 jobs:
-  build:
+  versioned-build:
     runs-on: ubuntu-latest
-
+    
     steps:
+      # Checkout the code
       - name: Checkout code
         uses: actions/checkout@v2
-
-      - name: Set up build name and number
-        run: |
-          BUILD_NAME="MyBuild"
-          BUILD_NUMBER=${{ github.run_number }}
-          echo "Build name: $BUILD_NAME"
-          echo "Build number: $BUILD_NUMBER"
-          echo "BUILD_NAME=$BUILD_NAME" >> $GITHUB_ENV
-          echo "BUILD_NUMBER=$BUILD_NUMBER" >> $GITHUB_ENV
-
-      - name: Set up Git identity
+        
+      # Set up Git with your name and email for commits and tags
+      - name: Set up Git
         run: |
           git config --global user.name "Veena2002"
           git config --global user.email "nagaveenab@datatemplate.com"
 
-      - name: Tag build
+      # Get the last version tag
+      - name: Get last version tag
+        id: last_version
         run: |
-          git tag -a "${{ env.BUILD_NAME }}-${{ env.BUILD_NUMBER }}" -m "Build ${{ env.BUILD_NAME }}-${{ env.BUILD_NUMBER }}"
-          git push https://x-access-token:${{ secrets.TOKEN }}@github.com/${{ github.repository }} "${{ env.BUILD_NAME }}-${{ env.BUILD_NUMBER }}"
+          LAST_TAG=$(git tag -l "v*" --sort=-v:refname | head -n 1)  # Get the latest tag
+          echo "Last tag: $LAST_TAG"
+          echo "LAST_TAG=$LAST_TAG" >> $GITHUB_ENV  # Save as an environment variable
 
-      - name: Upload build details
-        uses: actions/upload-artifact@v3
-        with:
-          name: build-details
-          path: ${{ env.BUILD_NAME }}-${{ env.BUILD_NUMBER }}
-          retention-days: 1
+      # Compute the new version (increment the patch version)
+      - name: Compute new version
+        id: version
+        run: |
+          if [ -z "${{ env.LAST_TAG }}" ]; then
+            VERSION="v1.0.0"  # Default version if no tags exist
+          else
+            BASE_VERSION="${{ env.LAST_TAG#v }}"  # Remove the 'v' prefix
+            VERSION=$(echo $BASE_VERSION | awk -F. -v OFS=. '{$NF++;print}')  # Increment patch version
+          fi
+          echo "New Version: $VERSION"
+          echo "VERSION=$VERSION" >> $GITHUB_ENV  # Save as environment variable
+
+      # Create and push the new tag
+      - name: Create and push new version tag
+        run: |
+          git tag "${{ env.VERSION }}"  # Create a new tag
+          git push origin "${{ env.VERSION }}"  # Push the new tag to the remote repository
+
+      # Run your build or deployment tasks
+      - name: Run build tasks
+        run: |
+          echo "Building version ${{ env.VERSION }}"
+          # Add your build or deployment commands here
